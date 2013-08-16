@@ -1,0 +1,114 @@
+<html>
+<head>
+<script>
+var disp=[1, 1, 1];
+function change(obj, n) {
+    switch(n) {
+        case 0:
+            obj.innerHTML = disp[0]?'Show all Repositories':'Hide Repos w/o Issues';
+        break;
+        case 1:
+            obj.innerHTML = disp[1]?'Show Issues':'Hide Issues';
+        break;
+        case 2:
+            obj.innerHTML = disp[2]?'Show Pulls':'Hide Pulls';
+        break;
+    }
+}
+function toggle(obj, n) {
+    var mysheet=document.styleSheets[0];
+    var myrules=mysheet.cssRules? mysheet.cssRules: mysheet.rules;
+    var mydisp=myrules[n];
+    if (disp[n]) {
+        mydisp.style.display='table-row';
+    }
+    else {
+        mydisp.style.display='none';
+    }
+    disp[n] = disp[n]?0:1;
+    change(obj, n);
+}
+</script>
+<style type=text/css>
+.disp {display: none;}
+.issue {display: none;}
+.pull {display: none;}
+.error {color:red;}
+.fine {color:green;}
+.warn {color:brown;}
+.bissue {background-color: lightyellow;}
+.bpull {background-color: moccasin;}
+.norm {background-color: lightgreen;}
+.enhancement {background-color: lightblue;}
+.bug {color:white; background-color: red;}
+.duplicate {color:white; background-color: darkgray;}
+.invalid {color:white; background-color: lightgray;}
+.question {color:white; background-color: deeppink;}
+.wontfix {color:white; background-color: linen;}
+</style>
+</head><body>
+<h2> GitHub Issues and Pull Requests Report</h2>
+<table><tr>
+<td><h4>  Created on {dtime} </td><td width=100></td>
+<td><button type='button' onclick='toggle(this,0);'>Show all Repositories</button></td>
+<td><button type='button' onclick='toggle(this,1);'>Show Issues</button></td>
+<td><button type='button' onclick='toggle(this,2);'>Show Pulls</button></td>
+</tr></table>
+<table border=1>
+<tr><th>Host</th>
+<th>Group</th>
+<th> Repository</th>
+<th> Issue or Pull Request</th>
+</tr>
+{#report}
+<tr><td class='norm'>{host}</td></tr>
+{#groups}
+<tr><td></td><td><a href='https://{host}/{group}'>{group}</a></td>
+<td class='fine'>Total {total}</td>
+{@math key="{itot}" method="add" operand="{ptot}"}
+{@gt value=0}
+<td class='warn'>
+{/gt}
+{@default}
+<td class='fine'>
+{/default}
+{/math}
+(Issues {itot} | Pull Requests {ptot})</td></tr>
+{#results}
+{@math key="{inum}" method="add" operand="{pnum}"}
+{@gt value=0}
+<tr><td></td><td></td><td class='error'>{repo}</td><td class='error'>(
+{?issues}
+Issues: {inum}
+{?pulls} | Pulls: {pnum}
+{/pulls}
+{/issues}
+{^issues}
+Pulls: {pnum}
+{/issues}
+)</td></tr>
+{/gt}
+{@default}
+<tr class='disp'><td></td><td></td><td class='fine'>{repo}</td></tr>
+{/default}
+{/math}
+{#issues}
+<tr class='issue'><td></td><td></td><td></td>
+    <td class='bissue'><a href='{link}'>{title}&nbsp;
+        {?label}<span class='{label}'>&nbsp;{label}</span>{/label}
+    </a></td>
+</tr>
+{/issues}
+{#pulls}
+<tr class='pull'><td></td><td></td><td></td>
+    <td class='bpull'><a href='{link}'>{title}</a></td>
+</tr>
+{/pulls}
+{/results}
+{/groups}
+{/report}
+</table>
+<br><h4>Use above Toggle buttons to show or hide the more information.
+<br>To visit the detail report of issue or pull request click the related link.</h4>
+</body>
+</html>
