@@ -10,6 +10,12 @@ Contains
 * dustconvert.js 'json - dusttemplate utility'
 * template 'report template'
 
+Usage
+-----
+```sh
+node ghreport.js -g google -o report.html
+```
+
 Dependency
 ----------
 
